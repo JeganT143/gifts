@@ -1,0 +1,197 @@
+.landing {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 100svh;
+  overflow: hidden;
+  background: var(--saffron);
+  padding-top: env(safe-area-inset-top);
+}
+
+.top {
+  padding: 22px var(--gutter) 0;
+  animation: rise 700ms var(--ease-out) both;
+}
+
+.copy {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: clamp(28px, 7svh, 72px) var(--gutter) 0;
+}
+
+.name {
+  font-size: clamp(26px, 7vw, 34px);
+  font-weight: 700;
+  font-variation-settings: 'wdth' 80;
+  line-height: 1;
+  margin-bottom: 6px;
+  animation: rise 700ms 60ms var(--ease-out) both;
+}
+
+.headline {
+  font-size: clamp(96px, 30vw, 200px);
+  line-height: 0.82;
+  margin-left: -0.04em;
+  outline: none;
+  transform-origin: bottom left;
+  animation: headline 900ms 120ms var(--ease-out) both;
+}
+
+.body {
+  max-width: 30ch;
+  margin-top: 22px;
+  font-size: clamp(18px, 4.8vw, 21px);
+  line-height: 1.4;
+  animation: rise 700ms 320ms var(--ease-out) both;
+}
+
+.note {
+  margin-top: 14px;
+  font-size: clamp(21px, 5.6vw, 25px);
+  line-height: 1.2;
+  transform: rotate(-2.5deg);
+  transform-origin: left center;
+  animation: note 700ms 520ms var(--ease-out) both;
+}
+
+.actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 12px;
+  margin-top: 28px;
+  width: 100%;
+  animation: rise 700ms 640ms var(--ease-out) both;
+}
+
+.cta {
+  min-width: min(100%, 300px);
+}
+
+.footnote {
+  font-size: 14px;
+  color: var(--ink-soft);
+}
+
+.returning {
+  padding: 0;
+  border: 0;
+  background: none;
+  font-size: 15px;
+  text-align: left;
+}
+
+.returning span {
+  font-weight: 650;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* The plate peeks up from the bottom of the screen. */
+.stage {
+  position: relative;
+  flex: 1 0 clamp(170px, 30svh, 380px);
+  margin-top: 28px;
+  min-height: clamp(170px, 30svh, 380px);
+}
+
+.plate {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: min(118vw, 620px);
+  aspect-ratio: 1;
+  transform: translateX(-50%);
+  animation: plate-in 1200ms 260ms var(--ease-out) both;
+}
+
+/* Static shadow, so the spinning plate stays a cheap composited layer. */
+.plate::before {
+  content: '';
+  position: absolute;
+  inset: 1.5%;
+  border-radius: 50%;
+  box-shadow: 0 34px 60px -14px rgba(120, 70, 0, 0.45);
+}
+
+.spin {
+  display: block;
+  width: 100%;
+  height: 100%;
+  position: relative;
+  animation: spin 90s linear infinite;
+  will-change: transform;
+}
+
+@media (min-width: 900px) {
+  .landing {
+    justify-content: center;
+  }
+  .top {
+    position: absolute;
+    top: 0;
+    left: 0;
+    padding: 32px 48px;
+  }
+  .copy {
+    width: 52%;
+    padding: 96px 0 96px max(48px, calc((100vw - 1200px) / 2));
+  }
+  .stage {
+    position: absolute;
+    inset: 0 0 0 50%;
+    margin: 0;
+    min-height: 0;
+  }
+  .plate {
+    top: 50%;
+    left: 8%;
+    width: min(76vh, 50vw);
+    transform: translateY(-50%);
+    animation-name: plate-in-side;
+  }
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+}
+
+@keyframes headline {
+  from {
+    opacity: 0;
+    transform: translateY(40px) scaleY(1.12);
+  }
+}
+
+@keyframes note {
+  from {
+    opacity: 0;
+    transform: rotate(-8deg) translateY(10px);
+  }
+}
+
+@keyframes plate-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 30%);
+  }
+}
+
+@keyframes plate-in-side {
+  from {
+    opacity: 0;
+    transform: translate(18%, -50%);
+  }
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

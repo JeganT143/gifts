@@ -1,0 +1,10 @@
+.logo {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  font-weight: 750;
+  font-size: 18px;
+  font-variation-settings: 'wdth' 85;
+  letter-spacing: -0.01em;
+  line-height: 1;
+}

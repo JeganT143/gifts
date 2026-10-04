@@ -1,0 +1,255 @@
+.arrival {
+  display: flex;
+  flex-direction: column;
+  min-height: 100svh;
+  max-width: calc(var(--column) + 2 * var(--gutter));
+  margin: 0 auto;
+  padding-top: env(safe-area-inset-top);
+  overflow: hidden;
+}
+
+.head {
+  padding: 28px var(--gutter) 0;
+}
+
+.eyebrow {
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+  animation: rise 600ms var(--ease-out) both;
+}
+
+.title {
+  margin-top: 10px;
+  font-size: clamp(60px, 17vw, 104px);
+  outline: none;
+  animation: rise 700ms 80ms var(--ease-out) both;
+}
+
+.arrival:not([data-stage='bag']) .title {
+  font-size: clamp(48px, 13vw, 84px);
+}
+
+.dishLine {
+  margin-top: 12px;
+  font-size: 18px;
+  max-width: 28ch;
+  animation: rise 600ms 200ms var(--ease-out) both;
+}
+
+[data-stage='bag'] .dishLine {
+  visibility: hidden;
+}
+
+.stage {
+  position: relative;
+  display: grid;
+  place-items: center;
+  flex: 1;
+  min-height: min(96vw, 480px);
+  padding: 16px var(--gutter);
+}
+
+.stage > * {
+  grid-area: 1 / 1;
+}
+
+.plate {
+  position: relative;
+  width: min(100%, 440px, 52svh);
+  min-width: 240px;
+  aspect-ratio: 1;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+  box-shadow: 0 34px 60px -24px rgba(120, 70, 0, 0.55);
+  touch-action: manipulation;
+  user-select: none;
+  -webkit-user-select: none;
+  transition: transform 120ms var(--ease-out);
+  animation: plate-up 900ms 120ms var(--ease-spring) both;
+}
+
+.plate:active:not(:disabled) {
+  transform: scale(0.985);
+}
+
+.plate:disabled {
+  cursor: default;
+}
+
+.plate:focus-visible {
+  outline-offset: 8px;
+  border-radius: 50%;
+}
+
+.plate svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* A shine across the clean plate. */
+[data-stage='finished'] .plate::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: linear-gradient(115deg, transparent 38%, rgba(255, 255, 255, 0.9) 50%, transparent 62%) no-repeat;
+  background-size: 260% 100%;
+  animation: shine 1100ms 500ms ease-in-out both;
+}
+
+.crumbs {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.crumbs i {
+  position: absolute;
+  border-radius: 40%;
+  transform: translate(-50%, -50%);
+  animation: crumb 850ms cubic-bezier(0.2, 0.6, 0.4, 1) forwards;
+}
+
+.bag {
+  position: relative;
+  width: min(68vw, 290px);
+  animation: bag-drop 1000ms 150ms var(--ease-out) both;
+}
+
+.bag[data-leaving] {
+  animation: bag-leave 650ms ease-in forwards;
+}
+
+.bagArt {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+
+.sticker {
+  position: absolute;
+  left: 50%;
+  top: 60%;
+  transform: translate(-50%, -50%);
+  color: var(--ink);
+  line-height: 0;
+}
+
+.bagNote {
+  position: absolute;
+  top: 26%;
+  right: -12%;
+  width: 52%;
+  padding: 10px 12px 12px;
+  background: #fffdf6;
+  font-size: 17px;
+  line-height: 1.15;
+  box-shadow: 0 8px 18px -8px rgba(60, 30, 0, 0.45);
+  transform: rotate(7deg);
+}
+
+.bagNote::before {
+  content: '';
+  position: absolute;
+  top: -4px;
+  left: 50%;
+  width: 18px;
+  height: 7px;
+  margin-left: -9px;
+  border-radius: 2px;
+  background: #8f969c;
+}
+
+.foot {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 104px;
+  padding: 0 var(--gutter) calc(28px + env(safe-area-inset-bottom));
+}
+
+.foot :global(.btn) {
+  min-width: min(100%, 280px);
+  animation: rise 600ms 900ms var(--ease-out) both;
+}
+
+.caption {
+  font-size: 22px;
+  font-weight: 700;
+  font-variation-settings: 'wdth' 88;
+  text-align: center;
+  text-wrap: balance;
+}
+
+.captionText {
+  display: inline-block;
+  animation: rise 420ms var(--ease-out) both;
+}
+
+[data-stage='finished'] .caption {
+  font-size: 30px;
+  font-weight: 800;
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+}
+
+@keyframes plate-up {
+  from {
+    opacity: 0;
+    transform: translateY(26%) scale(0.72) rotate(-20deg);
+  }
+}
+
+@keyframes bag-drop {
+  0% {
+    opacity: 0;
+    transform: translateY(-90%) rotate(-7deg);
+  }
+  15% {
+    opacity: 1;
+  }
+  58% {
+    transform: translateY(0) rotate(0) scale(1.03, 0.93);
+    transform-origin: bottom center;
+  }
+  74% {
+    transform: translateY(-3%) scale(0.99, 1.02);
+  }
+  100% {
+    transform: none;
+  }
+}
+
+@keyframes bag-leave {
+  to {
+    opacity: 0;
+    transform: translateY(55%) rotate(5deg) scale(0.9);
+  }
+}
+
+@keyframes crumb {
+  to {
+    opacity: 0;
+    transform: translate(calc(-50% + var(--dx)), calc(-50% + var(--dy) + 70px)) rotate(200deg);
+  }
+}
+
+@keyframes shine {
+  from {
+    background-position: 130% 0;
+  }
+  to {
+    background-position: -30% 0;
+  }
+}

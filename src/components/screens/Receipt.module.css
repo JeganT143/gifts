@@ -1,0 +1,230 @@
+.receipt {
+  max-width: calc(var(--column) + 2 * var(--gutter));
+  min-height: 100svh;
+  margin: 0 auto;
+  padding: calc(32px + env(safe-area-inset-top)) var(--gutter) calc(40px + env(safe-area-inset-bottom));
+}
+
+.title {
+  font-size: clamp(56px, 16vw, 96px);
+  outline: none;
+  animation: rise 700ms var(--ease-out) both;
+}
+
+/* The receipt feeds out of a slot, like a real billing printer. */
+.printer {
+  position: relative;
+  margin-top: 28px;
+}
+
+.slot {
+  position: relative;
+  z-index: 2;
+  height: 16px;
+  border-radius: 999px;
+  background: var(--ink);
+  box-shadow:
+    inset 0 -5px 0 rgba(255, 255, 255, 0.08),
+    0 8px 18px -10px rgba(28, 19, 12, 0.7);
+}
+
+.feed {
+  position: relative;
+  z-index: 1;
+  margin: -8px 14px 0;
+  overflow: hidden;
+  padding-bottom: 20px;
+}
+
+.paper {
+  --zig: 9px;
+  position: relative;
+  padding: 30px 20px calc(26px + var(--zig));
+  background: var(--paper);
+  font-family: var(--mono);
+  font-size: 13.5px;
+  line-height: 1.5;
+  filter: drop-shadow(0 10px 14px rgba(110, 60, 0, 0.22));
+  mask: conic-gradient(from -45deg at bottom, #0000, #000 1deg 89deg, #0000 90deg) 50% / calc(2 * var(--zig)) 100%;
+  animation: print 2100ms 300ms steps(24, end) both;
+}
+
+.paperHead {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  padding-bottom: 16px;
+  text-align: center;
+  color: var(--ink-soft);
+}
+
+.paperHead svg {
+  margin-bottom: 6px;
+  color: var(--ink);
+}
+
+.brand {
+  font-family: var(--sans);
+  font-size: 20px;
+  font-weight: 800;
+  font-variation-settings: 'wdth' 85;
+  color: var(--ink);
+  margin-bottom: 4px;
+}
+
+.pairs {
+  margin: 0;
+  padding: 12px 0;
+  border-top: 1.5px dashed rgba(28, 19, 12, 0.3);
+}
+
+.pairs div,
+.total,
+.paidBy {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.pairs dt {
+  color: var(--ink-soft);
+}
+
+.pairs dd {
+  margin: 0;
+  text-align: right;
+}
+
+.lines {
+  width: 100%;
+  border-collapse: collapse;
+  border-top: 1.5px dashed rgba(28, 19, 12, 0.3);
+}
+
+.lines td {
+  padding: 3px 0;
+  vertical-align: top;
+}
+
+.lines tr:first-child td {
+  padding-top: 12px;
+}
+
+.lines tr:last-child td {
+  padding-bottom: 12px;
+}
+
+.lines td:last-child {
+  padding-left: 12px;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.total {
+  padding-top: 12px;
+  border-top: 1.5px dashed rgba(28, 19, 12, 0.3);
+  font-family: var(--sans);
+  font-size: 26px;
+  font-weight: 800;
+  font-variation-settings: 'wdth' 80;
+  line-height: 1.1;
+  text-transform: uppercase;
+}
+
+.paidBy {
+  padding: 4px 0 12px;
+  font-weight: 500;
+}
+
+.fine {
+  padding-top: 12px;
+  border-top: 1.5px dashed rgba(28, 19, 12, 0.3);
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--ink-soft);
+}
+
+.barcode {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  margin-top: 16px;
+  font-size: 11px;
+  color: var(--ink-soft);
+}
+
+.barcode svg {
+  width: 72%;
+  height: 38px;
+  fill: var(--ink);
+}
+
+.stamp {
+  position: absolute;
+  right: 4%;
+  top: 37%;
+  width: 58%;
+  max-width: 230px;
+  opacity: 0.88;
+  mix-blend-mode: multiply;
+  transform: rotate(-11deg);
+  pointer-events: none;
+  animation: stamp 340ms 2300ms cubic-bezier(0.5, 0, 0.75, 0) both;
+}
+
+.stampText {
+  font-family: var(--sans);
+  font-size: 37px;
+  font-weight: 800;
+  font-variation-settings: 'wdth' 75;
+  letter-spacing: 0.02em;
+}
+
+.stampDate {
+  font-family: var(--mono);
+  font-size: 12px;
+  letter-spacing: 0.18em;
+}
+
+.note {
+  margin-top: 12px;
+  font-size: 23px;
+  line-height: 1.25;
+  transform: rotate(-1.5deg);
+  animation: rise 700ms 2900ms var(--ease-out) both;
+}
+
+.note span {
+  display: block;
+  margin-top: 6px;
+  text-align: right;
+}
+
+.actions {
+  display: grid;
+  gap: 10px;
+  margin-top: 28px;
+  animation: rise 700ms 3100ms var(--ease-out) both;
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+}
+
+@keyframes print {
+  from {
+    transform: translateY(-100%);
+  }
+}
+
+@keyframes stamp {
+  from {
+    opacity: 0;
+    transform: rotate(-4deg) scale(2.1);
+  }
+}
