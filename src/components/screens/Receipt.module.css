@@ -227,4 +227,35 @@
     opacity: 0;
     transform: rotate(-4deg) scale(2.1);
   }
+
+  @media (max-width: 420px) {
+    .receipt {
+      padding-top: calc(24px + env(safe-area-inset-top));
+    }
+
+    .title {
+      font-size: clamp(52px, 15vw, 72px);
+    }
+
+    .printer {
+      margin-top: 22px;
+    }
+
+    .feed {
+      margin-inline: 8px;
+    }
+
+    .paper {
+      padding-inline: 16px;
+      font-size: 12.5px;
+    }
+
+    .total {
+      font-size: 22px;
+    }
+
+    .note {
+      font-size: 21px;
+    }
+  }
 }

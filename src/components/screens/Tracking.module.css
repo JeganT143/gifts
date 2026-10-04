@@ -330,6 +330,43 @@
   .tracking {
     padding-top: 24px;
   }
+
+  @media (max-width: 420px) {
+    .sheet {
+      padding-inline: 16px;
+    }
+
+    .eta {
+      font-size: 48px;
+    }
+
+    .statusTitle {
+      font-size: 23px;
+    }
+
+    .statusDetail {
+      font-size: 16px;
+    }
+
+    .rider {
+      grid-template-columns: 42px minmax(0, 1fr) auto;
+      gap: 9px;
+      padding-inline: 10px;
+    }
+
+    .avatar {
+      width: 42px;
+      height: 42px;
+      font-size: 19px;
+    }
+
+    .call {
+      gap: 4px;
+      height: 40px;
+      padding-inline: 10px;
+      font-size: 14px;
+    }
+  }
   .mapWrap {
     border-radius: 28px 28px 0 0;
   }

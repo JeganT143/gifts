@@ -32,7 +32,7 @@
 }
 
 .headline {
-  font-size: clamp(96px, 30vw, 200px);
+  font-size: clamp(78px, 25vw, 200px);
   line-height: 0.82;
   margin-left: -0.04em;
   outline: none;
@@ -129,6 +129,35 @@
 @media (min-width: 900px) {
   .landing {
     justify-content: center;
+  }
+
+  @media (max-width: 420px) {
+    .top {
+      padding-top: 18px;
+    }
+
+    .copy {
+      padding-top: clamp(24px, 6svh, 44px);
+    }
+
+    .body {
+      max-width: 28ch;
+      margin-top: 18px;
+    }
+
+    .actions {
+      margin-top: 24px;
+    }
+
+    .stage {
+      flex-basis: clamp(170px, 27svh, 230px);
+      min-height: clamp(170px, 27svh, 230px);
+      margin-top: 20px;
+    }
+
+    .plate {
+      width: 112vw;
+    }
   }
   .top {
     position: absolute;

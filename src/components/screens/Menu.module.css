@@ -158,3 +158,59 @@
     transform: translateY(16px);
   }
 }
+
+@media (max-width: 420px) {
+  .menu {
+    padding-inline: 16px;
+  }
+
+  .bar {
+    gap: 8px;
+  }
+
+  .deliver {
+    max-width: 15ch;
+    font-size: 13px;
+  }
+
+  .intro {
+    margin-top: 30px;
+  }
+
+  .title {
+    font-size: clamp(48px, 14vw, 62px);
+  }
+
+  .subtitle {
+    font-size: 17px;
+  }
+
+  .list {
+    gap: 10px;
+    margin-top: 24px;
+  }
+
+  .item {
+    grid-template-columns: 76px minmax(0, 1fr) 36px;
+    gap: 10px;
+    padding: 10px 10px 10px 8px;
+    border-radius: 20px;
+  }
+
+  .thumb {
+    width: 76px;
+  }
+
+  .name {
+    font-size: 17px;
+  }
+
+  .description {
+    font-size: 13.5px;
+  }
+
+  .add {
+    width: 36px;
+    height: 36px;
+  }
+}
