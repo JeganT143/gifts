@@ -1,0 +1,40 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100svh;
+  max-width: calc(var(--column) + 2 * var(--gutter));
+  margin: 0 auto;
+  padding: calc(22px + env(safe-area-inset-top)) var(--gutter) 40px;
+  background: var(--saffron);
+}
+
+.content {
+  margin: auto 0;
+  padding: 48px 0;
+  animation: screen-enter 520ms var(--ease-out) both;
+}
+
+.eyebrow {
+  font-size: 13px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-soft);
+}
+
+.title {
+  margin-top: 10px;
+  font-size: clamp(60px, 18vw, 112px);
+}
+
+.body {
+  max-width: 30ch;
+  margin-top: 18px;
+  font-size: 19px;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 28px;
+}

@@ -86,6 +86,16 @@ function Parotta({ id }: ArtProps) {
 export const parotta: DishArtSpec = {
   Base: Plate,
   Food: Parotta,
+  Silhouette: () => (
+    <>
+      {breads.map((bread, i) => (
+        <path key={i} d={bread.outline} />
+      ))}
+      <circle cx={bowl.cx} cy={bowl.cy} r={bowl.r} />
+    </>
+  ),
   radius: RADIUS,
   crumbs: ['#F6D89A', '#E7B566', '#C98A3C', '#A4501A'],
+  edge: '#9C5E22',
+  stain: '#D9822B',
 }

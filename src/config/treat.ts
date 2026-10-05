@@ -246,6 +246,60 @@ export const trackingSteps: TrackingStep[] = [
 ]
 
 /* -------------------------------------------------------------------------- */
+/* Chatting with the delivery partner                                          */
+/* -------------------------------------------------------------------------- */
+
+/**
+ * Where the rider is in the story. "stalled" is any step marked stalled above,
+ * "arriving" is everything after the last stalled step.
+ */
+export type RiderMood = 'riding' | 'stalled' | 'arriving'
+
+export type ChatPrompt = {
+  id: string
+  label: string
+  replies: Record<RiderMood, string>
+}
+
+/** Quick replies the friend can send. Asking the same thing twice gets left on seen. */
+export const chatPrompts: ChatPrompt[] = [
+  {
+    id: 'where',
+    label: 'Where are you?',
+    replies: {
+      riding: 'Very close. Two minutes.',
+      stalled: 'Stuck in traffic.',
+      arriving: 'Outside only. Come down.',
+    },
+  },
+  {
+    id: 'hurry',
+    label: 'Hurry up',
+    replies: {
+      riding: 'Going full speed. Safely.',
+      stalled: 'Tea is hot. Two minutes.',
+      arriving: 'Relax. Almost there.',
+    },
+  },
+  {
+    id: 'eat',
+    label: 'Don’t eat my food',
+    replies: {
+      riding: 'Who do you think I am?',
+      stalled: 'Not eating. Just checking the salt.',
+      arriving: 'I didn’t eat it. I tasted it. Big difference.',
+    },
+  },
+]
+
+/** What the host says after declining a call. */
+export const callReplies: Record<RiderMood, string> = {
+  riding: 'Driving. Will call back.',
+  stalled: 'Can’t talk. Eating.',
+  arriving: 'Coming, coming.',
+}
+
+/* -------------------------------------------------------------------------- */
 /* Copy                                                                        */
 /* -------------------------------------------------------------------------- */
 
@@ -258,9 +312,11 @@ export const copy = {
   landing: {
     headline: 'Finally.',
     body: `You asked. Then you kept asking. So here it is: ${host}’s treat. Order anything you want.`,
-    note: `It’s on me. For real this time. — ${hostInitial}`,
+    note: `It’s on me. For real this time.\u00A0—\u00A0${hostInitial}`,
     cta: 'Claim my treat',
     footnote: `Valid while ${host} is still in a good mood.`,
+    /** Runs around the spinning sticker next to the headline. */
+    sticker: 'Treat approved · Asked 1,284 times · ',
     returning: 'You’ve already been treated.',
     returningLink: 'See your receipt',
   },
@@ -290,8 +346,10 @@ export const copy = {
     riderRating: '4.9 (self-rated)',
     call: 'Call',
     calling: 'Calling…',
-    callDriving: `Call declined. ${host}: “Driving. Will call back.”`,
-    callEating: `Call declined. ${host}: “Can’t talk. Eating.”`,
+    callDeclined: `${host} declined your call`,
+    seen: 'Seen',
+    typing: `${host} is typing`,
+    chatLabel: `Message ${host}`,
     restaurant: 'Restaurant',
     teaShop: 'Tea shop',
     streets: ['Promise Rd', 'Excuse St', 'Someday Ave'],
@@ -300,7 +358,7 @@ export const copy = {
   arrival: {
     eyebrow: (time: string) => `Delivered at ${time}`,
     headline: 'It’s here.',
-    bagNote: `Checked it for you. Very good. — ${hostInitial}`,
+    bagNote: `Checked it for you. Very good.\u00A0—\u00A0${hostInitial}`,
     open: 'Open the bag',
     dishLine: 'Hand-delivered. Lightly tasted. Completely digital.',
     /** Shown after the given number of bites. */
@@ -311,6 +369,9 @@ export const copy = {
       [6, 'Almost there.'],
     ] as const,
     finished: 'Clean plate.',
+    rateQuestion: 'How was your treat?',
+    ratePerfect: 'Correct answer.',
+    rateCorrected: 'We’ve adjusted that to 5 stars for you.',
   },
   receipt: {
     headline: 'That was the treat.',
@@ -323,14 +384,17 @@ export const copy = {
     digitalLine: 'Digital discount',
     total: 'Total',
     paidBy: `Paid by ${host}`,
+    rating: 'Your rating',
+    ratingValue: (given: number) => (given >= 5 ? '5 stars' : `5 stars (you said ${given})`),
     calories: 'Calories',
     status: 'Treat status',
     statusValue: 'GIVEN',
     stamp: 'Treat given',
+    signatory: 'Authorised signatory',
     finePrint:
       'Valid proof of treat in all group chats. Non-refundable. Further treat requests will be left on seen.',
     note: 'Thanks for always asking. The real one is coming soon. This was just to buy some time.',
-    signoff: `— ${host}`,
+    signoff: `—\u00A0${host}`,
     share: 'Share with the group',
     shareText: `${host} finally gave me a treat. Claim yours:`,
     again: 'Order again',

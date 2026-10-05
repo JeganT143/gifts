@@ -161,15 +161,44 @@
   fill: var(--ink);
 }
 
+.signoff {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  min-height: 104px;
+  padding-top: 18px;
+}
+
+.signature {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.signature span {
+  font-size: 34px;
+  line-height: 1;
+  transform: rotate(-7deg) translateX(6px);
+  transform-origin: left bottom;
+}
+
+.signature small {
+  width: 136px;
+  padding-top: 5px;
+  border-top: 1px solid rgba(28, 19, 12, 0.45);
+  font-size: 11px;
+  color: var(--ink-soft);
+}
+
 .stamp {
   position: absolute;
-  right: 4%;
-  top: 37%;
-  width: 58%;
-  max-width: 230px;
+  right: -2%;
+  top: 50%;
+  width: 56%;
+  max-width: 220px;
   opacity: 0.88;
   mix-blend-mode: multiply;
-  transform: rotate(-11deg);
+  transform: translateY(-42%) rotate(-11deg);
   pointer-events: none;
   animation: stamp 340ms 2300ms cubic-bezier(0.5, 0, 0.75, 0) both;
 }
@@ -225,37 +254,37 @@
 @keyframes stamp {
   from {
     opacity: 0;
-    transform: rotate(-4deg) scale(2.1);
+    transform: translateY(-42%) rotate(-4deg) scale(2.1);
+  }
+}
+
+@media (max-width: 420px) {
+  .receipt {
+    padding-top: calc(24px + env(safe-area-inset-top));
   }
 
-  @media (max-width: 420px) {
-    .receipt {
-      padding-top: calc(24px + env(safe-area-inset-top));
-    }
+  .title {
+    font-size: clamp(52px, 15vw, 72px);
+  }
 
-    .title {
-      font-size: clamp(52px, 15vw, 72px);
-    }
+  .printer {
+    margin-top: 22px;
+  }
 
-    .printer {
-      margin-top: 22px;
-    }
+  .feed {
+    margin-inline: 8px;
+  }
 
-    .feed {
-      margin-inline: 8px;
-    }
+  .paper {
+    padding-inline: 16px;
+    font-size: 12.5px;
+  }
 
-    .paper {
-      padding-inline: 16px;
-      font-size: 12.5px;
-    }
+  .total {
+    font-size: 22px;
+  }
 
-    .total {
-      font-size: 22px;
-    }
-
-    .note {
-      font-size: 21px;
-    }
+  .note {
+    font-size: 21px;
   }
 }

@@ -110,6 +110,9 @@ function Jamun({ id }: ArtProps) {
 export const jamun: DishArtSpec = {
   Base: Bowl,
   Food: Jamun,
+  Silhouette: () => <circle cx={CENTER} cy={CENTER} r={RADIUS + 20} />,
   radius: RADIUS + 20,
   crumbs: ['#7E2E12', '#B9622C', '#F2B451', '#A9CB6A'],
+  edge: '#4A1709',
+  stain: '#D48A26',
 }

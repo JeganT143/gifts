@@ -1,7 +1,17 @@
 'use client'
 
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { copy, site, trackingSteps, type Phase, type StatusContext } from '@/config/treat'
+import {
+  callReplies,
+  chatPrompts,
+  copy,
+  site,
+  trackingSteps,
+  type ChatPrompt,
+  type Phase,
+  type RiderMood,
+  type StatusContext,
+} from '@/config/treat'
 import { formatClock, minutesLater } from '@/lib/format'
 import { displayName, type Order } from '@/lib/order'
 import { useTimeline } from '@/lib/useTimeline'
@@ -14,6 +24,10 @@ const STARTS = trackingSteps.map((_, i) => trackingSteps.slice(0, i).reduce((sum
 const TOTAL = trackingSteps.reduce((sum, step) => sum + step.hold, 0)
 const PHASES: Phase[] = ['confirmed', 'preparing', 'on-the-way', 'delivered']
 const PICKUP = trackingSteps.findIndex((step) => step.rider !== undefined)
+const LAST_STALLED = trackingSteps.reduce((last, step, i) => (step.stalled ? i : last), -1)
+
+const moodAt = (i: number): RiderMood =>
+  trackingSteps[i].stalled ? 'stalled' : LAST_STALLED >= 0 && i > LAST_STALLED ? 'arriving' : 'riding'
 
 type CallState = 'idle' | 'ringing' | 'declined'
 
@@ -40,6 +54,19 @@ export function Tracking({ order, onDelivered }: Props) {
   const etaText = typeof step.eta === 'string' ? step.eta : step.eta === 0 ? 'Here' : `${step.eta} min`
   const phase = PHASES.indexOf(step.phase)
   const history = trackingSteps.slice(0, index).reverse()
+  const title = step.title(context)
+
+  // Like real delivery apps: the tab title follows the order.
+  useEffect(() => {
+    const original = document.title
+    return () => {
+      document.title = original
+    }
+  }, [])
+
+  useEffect(() => {
+    document.title = `${etaText} · ${title}`
+  }, [etaText, title])
 
   return (
     <main className={styles.tracking}>
@@ -74,7 +101,7 @@ export function Tracking({ order, onDelivered }: Props) {
         <div className={styles.status} aria-live="polite" aria-atomic="true">
           <div key={step.id} className={styles.statusInner}>
             <p className={`mono ${styles.statusTime}`}>{context.at(step.minute)}</p>
-            <h2 className={styles.statusTitle}>{step.title(context)}</h2>
+            <h2 className={styles.statusTitle}>{title}</h2>
             <p className={styles.statusDetail}>{step.detail(context)}</p>
           </div>
         </div>
@@ -92,7 +119,7 @@ export function Tracking({ order, onDelivered }: Props) {
           ))}
         </ol>
 
-        {PICKUP >= 0 && index >= PICKUP && <RiderCard stalled={Boolean(step.stalled)} />}
+        {PICKUP >= 0 && index >= PICKUP && <RiderCard mood={moodAt(index)} />}
 
         <div className={styles.summary}>
           <span className={styles.summaryThumb}>
@@ -128,34 +155,63 @@ export function Tracking({ order, onDelivered }: Props) {
   )
 }
 
-function RiderCard({ stalled }: { stalled: boolean }) {
+type Message = { id: number; from: 'you' | 'host' | 'system'; text: string; seen?: boolean }
+
+function RiderCard({ mood }: { mood: RiderMood }) {
   const [call, setCall] = useState<CallState>('idle')
-  const [message, setMessage] = useState('')
-  const stalledNow = useRef(stalled)
+  const [messages, setMessages] = useState<Message[]>([])
+  const [typing, setTyping] = useState(false)
+  const moodNow = useRef(mood)
+  const asked = useRef(new Set<string>())
+  const nextId = useRef(1)
   const timers = useRef<number[]>([])
 
   useEffect(() => {
-    stalledNow.current = stalled
-  }, [stalled])
+    moodNow.current = mood
+  }, [mood])
 
   useEffect(() => () => timers.current.forEach((t) => window.clearTimeout(t)), [])
 
+  const later = (fn: () => void, ms: number) => timers.current.push(window.setTimeout(fn, ms))
+  const post = (from: Message['from'], text: string) => {
+    const id = nextId.current++
+    setMessages((current) => [...current, { id, from, text }])
+    return id
+  }
+
+  const reply = (text: () => string, delay: number) => {
+    setTyping(true)
+    later(() => {
+      setTyping(false)
+      post('host', text())
+    }, delay)
+  }
+
+  const send = (prompt: ChatPrompt) => {
+    if (typing) return
+    const key = `${prompt.id}:${moodNow.current}`
+    const id = post('you', prompt.label)
+    if (asked.current.has(key)) {
+      // Asked the same thing twice. Left on seen.
+      later(() => setMessages((current) => current.map((m) => (m.id === id ? { ...m, seen: true } : m))), 900)
+      return
+    }
+    asked.current.add(key)
+    reply(() => prompt.replies[moodNow.current], 1200 + Math.random() * 600)
+  }
+
   const startCall = () => {
     setCall('ringing')
-    setMessage('')
-    timers.current.push(
-      window.setTimeout(() => {
-        setCall('declined')
-        setMessage(stalledNow.current ? copy.tracking.callEating : copy.tracking.callDriving)
-      }, 1600),
-      window.setTimeout(() => setCall('idle'), 2600),
-      window.setTimeout(() => setMessage(''), 6000),
-    )
+    later(() => {
+      setCall('idle')
+      post('system', copy.tracking.callDeclined)
+      reply(() => callReplies[moodNow.current], 900)
+    }, 1800)
   }
 
   return (
-    <div className={styles.riderBlock}>
-      <div className={styles.rider}>
+    <div className={styles.rider}>
+      <div className={styles.riderHead}>
         <span className={styles.avatar} aria-hidden="true">
           {site.hostInitial}
         </span>
@@ -165,14 +221,44 @@ function RiderCard({ stalled }: { stalled: boolean }) {
             {copy.tracking.riderRole} · <Star /> {copy.tracking.riderRating}
           </p>
         </div>
-        <button type="button" className={styles.call} onClick={startCall} disabled={call !== 'idle'} data-ringing={call === 'ringing' || undefined}>
+        <button
+          type="button"
+          className={styles.call}
+          onClick={startCall}
+          disabled={call !== 'idle' || typing}
+          data-ringing={call === 'ringing' || undefined}
+        >
           <Phone />
           {call === 'ringing' ? copy.tracking.calling : copy.tracking.call}
         </button>
       </div>
-      <p className={styles.callMessage} role="status">
-        {message}
-      </p>
+
+      <ol className={styles.thread} aria-live="polite" aria-label={copy.tracking.chatLabel}>
+        {messages.slice(-5).map((m) => (
+          <li key={m.id} className={styles.message} data-from={m.from}>
+            {m.from === 'system' && <Phone size={13} />}
+            <span>{m.text}</span>
+            {m.seen && <small className={styles.seen}>{copy.tracking.seen}</small>}
+          </li>
+        ))}
+        {typing && (
+          <li className={styles.message} data-from="host" aria-label={copy.tracking.typing}>
+            <span className={styles.dots} aria-hidden="true">
+              <i />
+              <i />
+              <i />
+            </span>
+          </li>
+        )}
+      </ol>
+
+      <div className={styles.prompts} role="group" aria-label={copy.tracking.chatLabel}>
+        {chatPrompts.map((prompt) => (
+          <button key={prompt.id} type="button" onClick={() => send(prompt)} disabled={typing || call === 'ringing'}>
+            {prompt.label}
+          </button>
+        ))}
+      </div>
     </div>
   )
 }

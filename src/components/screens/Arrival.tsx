@@ -6,16 +6,18 @@ import { formatClock, minutesLater } from '@/lib/format'
 import { buzz, playBite } from '@/lib/feedback'
 import type { Order } from '@/lib/order'
 import { CENTER, dishArt, DishPlate, SIZE, TAU, type Bite } from '../dishes'
+import { Star } from '../icons'
 import { LogoMark } from '../Logo'
 import styles from './Arrival.module.css'
 
-type Stage = 'bag' | 'opening' | 'eating' | 'finished'
+type Stage = 'bag' | 'opening' | 'eating' | 'finished' | 'rating'
 
 type Crumb = { id: number; x: number; y: number; dx: number; dy: number; color: string; size: number }
 
 type Props = {
   order: Order
-  onFinished: () => void
+  /** Called with the stars the friend actually gave. */
+  onFinished: (rating: number) => void
 }
 
 /** How much of the dish has to be eaten before the plate counts as clean. */
@@ -79,17 +81,18 @@ export function Arrival({ order, onFinished }: Props) {
     if (eaten >= CLEAN_PLATE || ownBites >= MAX_BITES) {
       setStage('finished')
       buzz([18, 60, 18])
-      later(onFinished, 2200)
+      later(() => setStage('rating'), 1700)
     }
-  }, [stage, eaten, ownBites, later, onFinished])
+  }, [stage, eaten, ownBites, later])
+
+  useEffect(() => {
+    if (stage === 'eating') plateButton.current?.focus({ preventScroll: true })
+  }, [stage])
 
   const open = () => {
     setStage('opening')
     buzz(10)
-    later(() => {
-      setStage('eating')
-      plateButton.current?.focus({ preventScroll: true })
-    }, 750)
+    later(() => setStage('eating'), 750)
   }
 
   const bite = (x: number, y: number) => {
@@ -142,7 +145,7 @@ export function Arrival({ order, onFinished }: Props) {
   }
 
   const caption =
-    stage === 'finished'
+    stage === 'finished' || stage === 'rating'
       ? copy.arrival.finished
       : [...copy.arrival.captions].reverse().find(([after]) => ownBites >= after)?.[1] ?? ''
 
@@ -153,10 +156,10 @@ export function Arrival({ order, onFinished }: Props) {
     <main className={styles.arrival} data-stage={stage}>
       <header className={styles.head}>
         <p className={`mono ${styles.eyebrow}`}>{copy.arrival.eyebrow(formatClock(deliveredAt))}</p>
-        <h1 key={showBag ? 'bag' : 'dish'} className={`display ${styles.title}`} tabIndex={-1} data-screen-heading>
+        <h1 key={showBag ? 'title-bag' : 'title-dish'} className={`display ${styles.title}`} tabIndex={-1} data-screen-heading>
           {showBag ? copy.arrival.headline : `Your ${order.dish.shortName}.`}
         </h1>
-        <p key={showBag ? 'bag' : 'dish'} className={styles.dishLine} aria-hidden={showBag || undefined}>
+        <p key={showBag ? 'line-bag' : 'line-dish'} className={styles.dishLine} aria-hidden={showBag || undefined}>
           {copy.arrival.dishLine}
         </p>
       </header>
@@ -169,11 +172,11 @@ export function Arrival({ order, onFinished }: Props) {
             className={styles.plate}
             onPointerDown={onPointerDown}
             onClick={onClick}
-            disabled={stage === 'finished'}
+            disabled={stage !== 'eating'}
             aria-label={`Take a bite of your ${order.dish.shortName}`}
             aria-describedby="bite-caption"
           >
-            <DishPlate dish={order.dish.art} bites={bites} finished={stage === 'finished'} />
+            <DishPlate dish={order.dish.art} bites={bites} finished={stage === 'finished' || stage === 'rating'} />
             <span className={styles.crumbs} aria-hidden="true">
               {crumbs.map((c) => (
                 <i
@@ -203,6 +206,8 @@ export function Arrival({ order, onFinished }: Props) {
           <button type="button" className="btn btn-ink" onClick={open}>
             {copy.arrival.open}
           </button>
+        ) : stage === 'rating' ? (
+          <Rating onDone={onFinished} />
         ) : (
           <p id="bite-caption" className={styles.caption} aria-live="polite">
             <span key={caption} className={styles.captionText}>
@@ -212,6 +217,71 @@ export function Arrival({ order, onFinished }: Props) {
         )}
       </footer>
     </main>
+  )
+}
+
+/** Any rating is accepted, as long as it's five stars. */
+function Rating({ onDone }: { onDone: (given: number) => void }) {
+  const [given, setGiven] = useState<number | null>(null)
+  const [shown, setShown] = useState(0)
+  const [hover, setHover] = useState(0)
+  const [note, setNote] = useState('')
+  const first = useRef<HTMLButtonElement>(null)
+  const timers = useRef<number[]>([])
+
+  useEffect(() => {
+    first.current?.focus({ preventScroll: true })
+    const pending = timers.current
+    return () => pending.forEach((t) => window.clearTimeout(t))
+  }, [])
+
+  const later = (fn: () => void, ms: number) => timers.current.push(window.setTimeout(fn, ms))
+
+  const rate = (stars: number) => {
+    if (given !== null) return
+    setGiven(stars)
+    setShown(stars)
+    buzz(10)
+    let at = 450
+    for (let next = stars + 1; next <= 5; next++) {
+      later(() => {
+        setShown(next)
+        buzz(8)
+      }, at)
+      at += 170
+    }
+    later(() => setNote(stars >= 5 ? copy.arrival.ratePerfect : copy.arrival.rateCorrected), stars >= 5 ? 150 : at)
+    later(() => onDone(stars), at + 1700)
+  }
+
+  const lit = given === null ? hover : shown
+
+  return (
+    <div className={styles.rating}>
+      <p id="rate-question" className={styles.rateQuestion}>
+        {copy.arrival.rateQuestion}
+      </p>
+      <div className={styles.stars} role="group" aria-labelledby="rate-question" onPointerLeave={() => setHover(0)}>
+        {[1, 2, 3, 4, 5].map((n) => (
+          <button
+            key={n}
+            ref={n === 1 ? first : undefined}
+            type="button"
+            aria-label={`${n} star${n > 1 ? 's' : ''}`}
+            aria-pressed={given === n}
+            data-on={n <= lit || undefined}
+            disabled={given !== null}
+            onPointerEnter={() => setHover(n)}
+            onClick={() => rate(n)}
+          >
+            <Star size={36} />
+          </button>
+        ))}
+      </div>
+      <p className={styles.rateNote} aria-live="polite">
+        {note}
+      </p>
+    </div>
   )
 }
 

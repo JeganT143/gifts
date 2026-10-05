@@ -12,10 +12,16 @@ export type DishArtSpec = {
   Base: (props: ArtProps) => React.ReactNode
   /** The part bites are taken out of. */
   Food: (props: ArtProps) => React.ReactNode
+  /** Outline of the food, used to keep bite edges on the food. */
+  Silhouette: () => React.ReactNode
   /** Radius of the edible area, used for bite placement and progress. */
   radius: number
   /** Colours for the crumbs that fly off a bite. */
   crumbs: string[]
+  /** Colour of the bitten edge of the food. */
+  edge: string
+  /** Colour of the smear left on the plate under the food. */
+  stain: string
 }
 
 /** A smooth, slightly irregular closed shape (Catmull-Rom through jittered points). */

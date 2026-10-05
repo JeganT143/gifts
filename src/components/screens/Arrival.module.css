@@ -192,6 +192,57 @@
   animation: rise 420ms var(--ease-out) both;
 }
 
+.rating {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  animation: rise 500ms var(--ease-out) both;
+}
+
+.rateQuestion {
+  font-size: 22px;
+  font-weight: 750;
+  font-variation-settings: 'wdth' 88;
+}
+
+.stars {
+  display: flex;
+  gap: 2px;
+}
+
+.stars button {
+  display: grid;
+  place-items: center;
+  width: 50px;
+  height: 50px;
+  padding: 0;
+  border: 0;
+  border-radius: 12px;
+  background: none;
+  color: rgba(28, 19, 12, 0.22);
+  transition: color 160ms ease;
+}
+
+.stars button:disabled {
+  cursor: default;
+}
+
+.stars button[data-on] {
+  color: var(--ink);
+}
+
+.stars button[data-on] svg {
+  animation: star-pop 420ms var(--ease-spring);
+}
+
+.rateNote {
+  min-height: 1.45em;
+  font-size: 16px;
+  font-weight: 600;
+  text-align: center;
+}
+
 [data-stage='finished'] .caption {
   font-size: 30px;
   font-weight: 800;
@@ -231,6 +282,12 @@
   }
 }
 
+@keyframes star-pop {
+  40% {
+    transform: scale(1.35) rotate(-8deg);
+  }
+}
+
 @keyframes bag-leave {
   to {
     opacity: 0;
@@ -249,40 +306,40 @@
   from {
     background-position: 130% 0;
   }
-
-  @media (max-width: 420px) {
-    .head {
-      padding-top: 22px;
-    }
-
-    .title {
-      font-size: clamp(54px, 16vw, 76px);
-    }
-
-    .arrival:not([data-stage='bag']) .title {
-      font-size: clamp(42px, 12vw, 64px);
-    }
-
-    .stage {
-      min-height: min(88vw, 390px);
-      padding-inline: 16px;
-    }
-
-    .plate {
-      width: min(100%, 390px);
-      min-width: 0;
-    }
-
-    .bag {
-      width: min(72vw, 260px);
-    }
-
-    .bagNote {
-      right: -8%;
-      font-size: 15px;
-    }
-  }
   to {
     background-position: -30% 0;
+  }
+}
+
+@media (max-width: 420px) {
+  .head {
+    padding-top: 22px;
+  }
+
+  .title {
+    font-size: clamp(54px, 16vw, 76px);
+  }
+
+  .arrival:not([data-stage='bag']) .title {
+    font-size: clamp(42px, 12vw, 64px);
+  }
+
+  .stage {
+    min-height: min(88vw, 390px);
+    padding-inline: 16px;
+  }
+
+  .plate {
+    width: min(100%, 390px);
+    min-width: 0;
+  }
+
+  .bag {
+    width: min(72vw, 260px);
+  }
+
+  .bagNote {
+    right: -8%;
+    font-size: 15px;
   }
 }

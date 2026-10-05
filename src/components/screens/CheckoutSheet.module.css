@@ -244,31 +244,6 @@
     transform: translateY(-50%);
     animation-name: sheet-pop;
   }
-
-  @media (max-width: 420px) {
-    .sheet {
-      padding-inline: 16px;
-      border-radius: 24px 24px 0 0;
-    }
-
-    .head {
-      grid-template-columns: 60px minmax(0, 1fr) 40px;
-      gap: 10px;
-    }
-
-    .thumb {
-      width: 60px;
-    }
-
-    .title {
-      font-size: 20px;
-    }
-
-    .chip {
-      padding-inline: 10px;
-      font-size: 14px;
-    }
-  }
 }
 
 @keyframes fade {
@@ -293,5 +268,30 @@
 @keyframes spin {
   to {
     transform: rotate(360deg);
+  }
+}
+
+@media (max-width: 420px) {
+  .sheet {
+    padding-inline: 16px;
+    border-radius: 24px 24px 0 0;
+  }
+
+  .head {
+    grid-template-columns: 60px minmax(0, 1fr) 40px;
+    gap: 10px;
+  }
+
+  .thumb {
+    width: 60px;
+  }
+
+  .title {
+    font-size: 20px;
+  }
+
+  .chip {
+    padding-inline: 10px;
+    font-size: 14px;
   }
 }

@@ -148,6 +148,9 @@ function Biryani({ id }: ArtProps) {
 export const biryani: DishArtSpec = {
   Base: Plate,
   Food: Biryani,
+  Silhouette: () => <path d={mound} />,
   radius: RADIUS,
   crumbs: ['#FFF9EC', '#F4B13E', '#E5801F', '#AE4B1F'],
+  edge: '#B5782F',
+  stain: '#E9A23B',
 }

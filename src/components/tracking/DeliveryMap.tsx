@@ -146,10 +146,10 @@ export function DeliveryMap({ index, elapsed, starts, homeLabel }: Props) {
       <circle cx={ROUNDABOUT.x} cy={ROUNDABOUT.y} r={12} fill="#CFE0BD" />
 
       <g className={styles.street}>
-        <text x={130} y={72.6}>
+        <text x={130} y={152.6}>
           {promiseRd}
         </text>
-        <text x={190} y={194} transform="rotate(-90 190 194)" dy={2.6}>
+        <text x={70} y={112} transform="rotate(-90 70 112)" dy={2.6}>
           {excuseSt}
         </text>
         <text x={130} y={240.6}>

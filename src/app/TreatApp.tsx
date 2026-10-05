@@ -12,6 +12,15 @@ import { loadTreat, saveTreat } from '@/lib/storage'
 
 type Screen = 'landing' | 'menu' | 'tracking' | 'arrival' | 'receipt'
 
+/** The big moments sit on saffron; the "app" screens sit on rice-white. */
+const TONE: Record<Screen, { tone: string; color: string }> = {
+  landing: { tone: 'saffron', color: '#F5B323' },
+  menu: { tone: 'rice', color: '#FFFCF6' },
+  tracking: { tone: 'rice', color: '#F2E9D8' },
+  arrival: { tone: 'saffron', color: '#F5B323' },
+  receipt: { tone: 'saffron', color: '#F5B323' },
+}
+
 type Props = {
   name: string | null
 }
@@ -27,12 +36,12 @@ export function TreatApp({ name }: Props) {
   }, [])
 
   useEffect(() => {
-    document.body.dataset.tone = screen === 'landing' ? 'saffron' : 'rice'
-    const heading = document.querySelector<HTMLElement>('[data-screen-heading]')
-    heading?.focus({ preventScroll: true })
-
-    return () => {
-      delete document.body.dataset.tone
+    const { tone, color } = TONE[screen]
+    document.body.dataset.tone = tone
+    document.querySelector('meta[name="theme-color"]')?.setAttribute('content', color)
+    window.scrollTo(0, 0)
+    if (screen !== 'landing') {
+      document.querySelector<HTMLElement>('[data-screen-heading]')?.focus({ preventScroll: true })
     }
   }, [screen])
 
@@ -51,10 +60,12 @@ export function TreatApp({ name }: Props) {
 
   const finishDelivery = () => setScreen('arrival')
 
-  const finishArrival = () => {
+  const finishArrival = (rating: number) => {
     if (!order) return
-    saveTreat(order)
-    setSavedOrder(order)
+    const rated = { ...order, rating }
+    saveTreat(rated)
+    setOrder(rated)
+    setSavedOrder(rated)
     setScreen('receipt')
   }
 

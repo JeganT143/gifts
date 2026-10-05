@@ -12,7 +12,7 @@ export function nameFromSlug(slug: string): string | null {
     return null
   }
 
-  const cleaned = raw.replace(/[-_.+]+/g, ' ').replace(/\s+/g, ' ').trim()
+  const cleaned = raw.replace(/[-_+]+/g, ' ').replace(/\s+/g, ' ').trim()
   if (!cleaned || cleaned.length > MAX_LENGTH) return null
   if (!/^[\p{L}\p{M}' ]+$/u.test(cleaned)) return null
 

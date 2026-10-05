@@ -101,6 +101,9 @@ function Pizza({ id }: ArtProps) {
 export const pizza: DishArtSpec = {
   Base: Plate,
   Food: Pizza,
+  Silhouette: () => <circle cx={CENTER} cy={CENTER} r={RADIUS} />,
   radius: RADIUS,
   crumbs: ['#E9B465', '#F1C65A', '#C63B22', '#3D8A38'],
+  edge: '#9E4A1A',
+  stain: '#C63B22',
 }

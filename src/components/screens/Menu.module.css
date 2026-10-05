@@ -152,6 +152,21 @@
   color: var(--rice);
 }
 
+@media (min-width: 900px) {
+  .menu {
+    max-width: 960px;
+    padding-inline: 40px;
+  }
+  .list {
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    margin-top: 36px;
+  }
+  .item {
+    height: 100%;
+  }
+}
+
 @keyframes item-in {
   from {
     opacity: 0;

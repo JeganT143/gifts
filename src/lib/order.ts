@@ -7,6 +7,8 @@ export type Order = {
   dish: Dish
   addons: Addon[]
   placedAt: number
+  /** Stars the friend gave after eating, before the host "adjusted" it. */
+  rating?: number
 }
 
 export const addonPrice = (addon: Addon, dish: Dish) =>

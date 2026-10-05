@@ -114,6 +114,12 @@ export function Receipt({ order, notify }: Props) {
             </div>
 
             <dl className={styles.pairs}>
+              {order.rating !== undefined && (
+                <div>
+                  <dt>{copy.receipt.rating}</dt>
+                  <dd>{copy.receipt.ratingValue(order.rating)}</dd>
+                </div>
+              )}
               <div>
                 <dt>{copy.receipt.calories}</dt>
                 <dd>0 kcal</dd>
@@ -127,9 +133,16 @@ export function Receipt({ order, notify }: Props) {
             </dl>
 
             <p className={styles.fine}>{copy.receipt.finePrint}</p>
-            <Barcode value={order.orderNo} />
 
-            <Stamp date={formatDay(delivered)} />
+            <div className={styles.signoff}>
+              <p className={styles.signature}>
+                <span className="hand">{site.host}</span>
+                <small>{copy.receipt.signatory}</small>
+              </p>
+              <Stamp date={formatDay(delivered)} />
+            </div>
+
+            <Barcode value={order.orderNo} />
           </article>
         </div>
       </div>

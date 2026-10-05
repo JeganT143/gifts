@@ -8,6 +8,7 @@ type Saved = {
   dishId: string
   addonIds: string[]
   placedAt: number
+  rating?: number
 }
 
 /** Remembers a finished treat so a returning friend can get back to their receipt. */
@@ -18,6 +19,7 @@ export function saveTreat(order: Order) {
     dishId: order.dish.id,
     addonIds: order.addons.map((addon) => addon.id),
     placedAt: order.placedAt,
+    rating: order.rating,
   }
   try {
     localStorage.setItem(KEY, JSON.stringify(saved))
@@ -39,6 +41,7 @@ export function loadTreat(): Order | null {
       dish,
       addons: Array.isArray(saved.addonIds) ? findAddons(saved.addonIds) : [],
       placedAt: saved.placedAt,
+      rating: typeof saved.rating === 'number' ? saved.rating : undefined,
     }
   } catch {
     return null
